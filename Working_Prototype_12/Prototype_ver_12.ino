@@ -1,0 +1,49 @@
+// Define pins for both sensors and LED
+int led = 3;                // the pin that the LED is attached to
+int digitalSensor = 6;      // the pin that the digital sensor is attached to
+int analogSensor = A0;      // the pin that the analog sensor (mic sensor) is attached to
+
+// State and value variables for both sensors
+int motionState = LOW;      // by default, no motion detected
+int motionVal = 0;          // variable to store the digital sensor (motion sensor) status
+int micVal = 0;             // variable to store the analog sensor (mic sensor) 
+
+void setup() {
+  // Initialize LED and sensors
+  pinMode(led, OUTPUT);      // initialize LED as an output
+  pinMode(digitalSensor, INPUT);    // initialize digital sensor as an input
+  Serial.begin(9600);        // initialize serial
+}
+
+void loop() {
+  // Read values from both sensors
+  motionVal = digitalRead(digitalSensor);   // read digital sensor (motion sensor)
+  micVal = analogRead(analogSensor);        // read analog sensor (mic sensor) 
+    delay(100);
+
+  // Output the analog sensor value to Serial Monitor
+  Serial.println("Analog Sensor Value: " + String(micVal));
+
+  // Handle the digital sensor (motion sensor) output
+  if (motionVal == HIGH) {           // check if the sensor is HIGH
+    digitalWrite(led, HIGH);         // turn LED ON
+    delay(1000);                      // delay 100 milliseconds 
+    
+    if (motionState == LOW) {
+      Serial.println("Motion detected!");
+      motionState = HIGH;   // update motion state to HIGH
+    }
+  } 
+  else {
+    digitalWrite(led, LOW);         // turn LED OFF
+    delay(200);                     // delay 200 milliseconds 
+    
+    if (motionState == HIGH) {
+      Serial.println("Motion stopped!");
+      motionState = LOW;     // update motion state to LOW
+    }
+  }
+
+  // Short delay to reduce sensor noise
+  delay(100);
+}
